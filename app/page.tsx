@@ -1,17 +1,19 @@
 "\"use client"
 
 import { useState, useEffect } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import BillInput from "@/components/BillInput"
-import CurrencySelector from "@/components/CurrencySelector"
-import LanguageToggle from "@/components/LanguageToggle"
-import PeopleInput from "@/components/PeopleInput"
-import ResetButton from "@/components/ResetButton"
-import ResultsCard from "@/components/ResultsCard"
-import ShareResult from "@/components/ShareResult"
-import ThemeToggle from "@/components/ThemeToggle"
-import TipSelector from "@/components/TipSelector"
 import { useTranslation } from "react-i18next"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import ThemeToggle from "@/components/ThemeToggle"
+import LanguageToggle from "@/components/LanguageToggle"
+import BillInput from "@/components/BillInput"
+import TipSelector from "@/components/TipSelector"
+import PeopleInput from "@/components/PeopleInput"
+import ResultsCard from "@/components/ResultsCard"
+import CurrencySelector from "@/components/CurrencySelector"
+import ResetButton from "@/components/ResetButton"
+import ShareResult from "@/components/ShareResult"
+import AdSenseBanner from "@/components/AdSenseBanner"
+import ProVersionToggle from "@/components/ProVersionToggle"
 
 export interface CalculationResult {
   billAmount: number
@@ -28,15 +30,17 @@ export default function TipCalculator() {
   const [tipPercentage, setTipPercentage] = useState<number>(15)
   const [numberOfPeople, setNumberOfPeople] = useState<number>(1)
   const [currency, setCurrency] = useState<string>("$")
-  const [isProVersion, setIsProVersion] = useState<boolean>(false)
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false)
+  const [isProVersion, setIsProVersion] = useState<boolean>(false)
   const { t } = useTranslation()
 
   useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add("dark")
-    } else {
-      document.documentElement.classList.remove("dark")
+    if (typeof window !== "undefined") {
+      if (isDarkMode) {
+        document.documentElement.classList.add("dark")
+      } else {
+        document.documentElement.classList.remove("dark")
+      }
     }
   }, [isDarkMode])
 
@@ -71,6 +75,8 @@ export default function TipCalculator() {
           </div>
         </div>
 
+        <AdSenseBanner />
+
         <Card className="shadow-lg">
           <CardHeader>
             <CardTitle className="flex justify-between items-center">
@@ -82,6 +88,7 @@ export default function TipCalculator() {
             <BillInput billAmount={billAmount} setBillAmount={setBillAmount} currency={currency} />
             <TipSelector tipPercentage={tipPercentage} setTipPercentage={setTipPercentage} />
             <PeopleInput numberOfPeople={numberOfPeople} setNumberOfPeople={setNumberOfPeople} />
+
             <ResultsCard
               billAmount={billAmount}
               tipAmount={tipAmount}
@@ -90,12 +97,15 @@ export default function TipCalculator() {
               numberOfPeople={numberOfPeople}
               currency={currency}
             />
+
             <div className="flex gap-2">
-              <ShareResult result={calculationResult} />
               <ResetButton onReset={handleReset} />
+              <ShareResult result={calculationResult} />
             </div>
           </CardContent>
         </Card>
+
+        <ProVersionToggle isProVersion={isProVersion} setIsProVersion={setIsProVersion} />
       </div>
     </div>
   )
