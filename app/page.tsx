@@ -1,19 +1,19 @@
 "\"use client"
 
 import { useState, useEffect } from "react"
-import { useTranslation } from "react-i18next"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import ThemeToggle from "@/components/ThemeToggle"
-import LanguageToggle from "@/components/LanguageToggle"
+import { useTranslation } from "react-i18next"
+import AdSenseBanner from "@/components/AdSenseBanner"
+import ProVersionToggle from "@/components/ProVersionToggle"
 import BillInput from "@/components/BillInput"
 import TipSelector from "@/components/TipSelector"
 import PeopleInput from "@/components/PeopleInput"
 import ResultsCard from "@/components/ResultsCard"
-import CurrencySelector from "@/components/CurrencySelector"
-import ResetButton from "@/components/ResetButton"
 import ShareResult from "@/components/ShareResult"
-import AdSenseBanner from "@/components/AdSenseBanner"
-import ProVersionToggle from "@/components/ProVersionToggle"
+import CurrencySelector from "@/components/CurrencySelector"
+import LanguageToggle from "@/components/LanguageToggle"
+import ThemeToggle from "@/components/ThemeToggle"
+import ResetButton from "@/components/ResetButton"
 
 export interface CalculationResult {
   billAmount: number
@@ -32,6 +32,7 @@ export default function TipCalculator() {
   const [currency, setCurrency] = useState<string>("$")
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false)
   const [isProVersion, setIsProVersion] = useState<boolean>(false)
+
   const { t } = useTranslation()
 
   useEffect(() => {
@@ -75,8 +76,6 @@ export default function TipCalculator() {
           </div>
         </div>
 
-        <AdSenseBanner />
-
         <Card className="shadow-lg">
           <CardHeader>
             <CardTitle className="flex justify-between items-center">
@@ -105,6 +104,7 @@ export default function TipCalculator() {
           </CardContent>
         </Card>
 
+        <AdSenseBanner />
         <ProVersionToggle isProVersion={isProVersion} setIsProVersion={setIsProVersion} />
       </div>
     </div>
