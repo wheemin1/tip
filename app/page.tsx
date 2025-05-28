@@ -1,19 +1,19 @@
 "\"use client"
 
 import { useState, useEffect } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useTranslation } from "react-i18next"
-import AdSenseBanner from "@/components/AdSenseBanner"
-import ProVersionToggle from "@/components/ProVersionToggle"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import BillInput from "@/components/BillInput"
 import TipSelector from "@/components/TipSelector"
 import PeopleInput from "@/components/PeopleInput"
 import ResultsCard from "@/components/ResultsCard"
-import ResetButton from "@/components/ResetButton"
-import ShareResult from "@/components/ShareResult"
 import CurrencySelector from "@/components/CurrencySelector"
 import LanguageToggle from "@/components/LanguageToggle"
 import ThemeToggle from "@/components/ThemeToggle"
+import ResetButton from "@/components/ResetButton"
+import ShareResult from "@/components/ShareResult"
+import AdSenseBanner from "@/components/AdSenseBanner"
+import ProVersionToggle from "@/components/ProVersionToggle"
 
 export interface CalculationResult {
   billAmount: number
@@ -36,22 +36,6 @@ export default function TipCalculator() {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      if (
-        localStorage.getItem("theme") === "dark" ||
-        (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches)
-      ) {
-        setIsDarkMode(true)
-        document.documentElement.classList.add("dark")
-      } else {
-        setIsDarkMode(false)
-        document.documentElement.classList.remove("dark")
-      }
-    }
-  }, [])
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("theme", isDarkMode ? "dark" : "light")
       if (isDarkMode) {
         document.documentElement.classList.add("dark")
       } else {
@@ -59,6 +43,10 @@ export default function TipCalculator() {
       }
     }
   }, [isDarkMode])
+
+  const tipAmount = (billAmount * tipPercentage) / 100
+  const totalAmount = billAmount + tipAmount
+  const amountPerPerson = totalAmount / numberOfPeople
 
   const handleReset = () => {
     setBillAmount(0)
@@ -70,9 +58,9 @@ export default function TipCalculator() {
     billAmount,
     tipPercentage,
     numberOfPeople,
-    tipAmount: (billAmount * tipPercentage) / 100,
-    totalAmount: billAmount + (billAmount * tipPercentage) / 100,
-    amountPerPerson: (billAmount + (billAmount * tipPercentage) / 100) / numberOfPeople,
+    tipAmount,
+    totalAmount,
+    amountPerPerson,
     currency,
   }
 
@@ -103,9 +91,9 @@ export default function TipCalculator() {
 
             <ResultsCard
               billAmount={billAmount}
-              tipAmount={calculationResult.tipAmount}
-              totalAmount={calculationResult.totalAmount}
-              amountPerPerson={calculationResult.amountPerPerson}
+              tipAmount={tipAmount}
+              totalAmount={totalAmount}
+              amountPerPerson={amountPerPerson}
               numberOfPeople={numberOfPeople}
               currency={currency}
             />
