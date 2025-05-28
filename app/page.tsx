@@ -2,18 +2,19 @@
 
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { useTranslation } from "react-i18next"
 import AdSenseBanner from "@/components/AdSenseBanner"
+import ProVersionToggle from "@/components/ProVersionToggle"
+import ShareResult from "@/components/ShareResult"
 import BillInput from "@/components/BillInput"
+import TipSelector from "@/components/TipSelector"
+import PeopleInput from "@/components/PeopleInput"
+import ResultsCard from "@/components/ResultsCard"
 import CurrencySelector from "@/components/CurrencySelector"
 import LanguageToggle from "@/components/LanguageToggle"
-import PeopleInput from "@/components/PeopleInput"
-import ProVersionToggle from "@/components/ProVersionToggle"
 import ResetButton from "@/components/ResetButton"
-import ResultsCard from "@/components/ResultsCard"
-import ShareResult from "@/components/ShareResult"
 import ThemeToggle from "@/components/ThemeToggle"
-// Define the CalculationResult type
+import { useTranslation } from "react-i18next"
+
 export interface CalculationResult {
   billAmount: number
   tipPercentage: number
@@ -31,8 +32,7 @@ export default function TipCalculator() {
   const [currency, setCurrency] = useState<string>("$")
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false)
   const [isProVersion, setIsProVersion] = useState<boolean>(false)
-
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -44,17 +44,17 @@ export default function TipCalculator() {
     }
   }, [isDarkMode])
 
-  const handleReset = () => {
+  const tipAmount = (billAmount * tipPercentage) / 100
+  const totalAmount = billAmount + tipAmount
+  const amountPerPerson = totalAmount / numberOfPeople
+
+  const reset = () => {
     setBillAmount(0)
     setTipPercentage(15)
     setNumberOfPeople(1)
   }
 
-  const tipAmount = (billAmount * tipPercentage) / 100
-  const totalAmount = billAmount + tipAmount
-  const amountPerPerson = totalAmount / numberOfPeople
-
-  const calculationResult: CalculationResult = {
+  const result: CalculationResult = {
     billAmount,
     tipPercentage,
     numberOfPeople,
@@ -76,8 +76,8 @@ export default function TipCalculator() {
           </div>
         </div>
 
-        {/* Ad Banner */}
-        <AdSenseBanner />
+        {/* Pro Version Card */}
+        <ProVersionToggle isProVersion={isProVersion} setIsProVersion={setIsProVersion} />
 
         {/* Main Calculator */}
         <Card className="shadow-lg">
@@ -109,14 +109,14 @@ export default function TipCalculator() {
 
             {/* Action Buttons */}
             <div className="flex gap-2">
-              <ResetButton onReset={handleReset} />
-              <ShareResult result={calculationResult} />
+              <ResetButton onReset={reset} />
+              <ShareResult result={result} />
             </div>
           </CardContent>
         </Card>
 
-        {/* Pro Version */}
-        <ProVersionToggle isProVersion={isProVersion} setIsProVersion={setIsProVersion} />
+        {/* Ad Banner */}
+        <AdSenseBanner />
       </div>
     </div>
   )
