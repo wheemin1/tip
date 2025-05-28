@@ -1,15 +1,8 @@
-export type CalculationResult = {
-  billAmount: number
-  tipPercentage: number
-  numberOfPeople: number
-  tipAmount: number
-  totalAmount: number
-  amountPerPerson: number
-  currency: string
-}
-;('"use client')
+"\"use client"
 
 import { useState, useEffect } from "react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useTranslation } from "react-i18next"
 import AdSenseBanner from "@/components/AdSenseBanner"
 import BillInput from "@/components/BillInput"
 import CurrencySelector from "@/components/CurrencySelector"
@@ -20,8 +13,16 @@ import ResetButton from "@/components/ResetButton"
 import ResultsCard from "@/components/ResultsCard"
 import ShareResult from "@/components/ShareResult"
 import ThemeToggle from "@/components/ThemeToggle"
-import TipSelector from "@/components/TipSelector"
-import { useTranslation } from "react-i18next"
+// Define the CalculationResult type
+export interface CalculationResult {
+  billAmount: number
+  tipPercentage: number
+  numberOfPeople: number
+  tipAmount: number
+  totalAmount: number
+  amountPerPerson: number
+  currency: string
+}
 
 export default function TipCalculator() {
   const [billAmount, setBillAmount] = useState<number>(0)
@@ -30,7 +31,8 @@ export default function TipCalculator() {
   const [currency, setCurrency] = useState<string>("$")
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false)
   const [isProVersion, setIsProVersion] = useState<boolean>(false)
-  const { t, i18n } = useTranslation()
+
+  const { t } = useTranslation()
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -42,15 +44,15 @@ export default function TipCalculator() {
     }
   }, [isDarkMode])
 
-  const tipAmount = (billAmount * tipPercentage) / 100
-  const totalAmount = billAmount + tipAmount
-  const amountPerPerson = totalAmount / numberOfPeople
-
-  const resetValues = () => {
+  const handleReset = () => {
     setBillAmount(0)
     setTipPercentage(15)
     setNumberOfPeople(1)
   }
+
+  const tipAmount = (billAmount * tipPercentage) / 100
+  const totalAmount = billAmount + tipAmount
+  const amountPerPerson = totalAmount / numberOfPeople
 
   const calculationResult: CalculationResult = {
     billAmount,
@@ -63,46 +65,58 @@ export default function TipCalculator() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-6">
-      <div className="container mx-auto max-w-md space-y-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">{t("title")}</h1>
-          <div className="space-x-2 flex items-center">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 p-4">
+      <div className="max-w-md mx-auto space-y-6">
+        {/* Header */}
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t("title")}</h1>
+          <div className="flex gap-2">
             <LanguageToggle />
             <ThemeToggle isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
           </div>
         </div>
 
-        <ProVersionToggle isProVersion={isProVersion} setIsProVersion={setIsProVersion} />
-
-        <div className="space-y-4">
-          <div className="bg-white dark:bg-gray-800 shadow-md rounded-md p-4 space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold">{t("calculator")}</h2>
-              <CurrencySelector currency={currency} setCurrency={setCurrency} />
-            </div>
-
-            <BillInput billAmount={billAmount} setBillAmount={setBillAmount} currency={currency} />
-            <TipSelector tipPercentage={tipPercentage} setTipPercentage={setTipPercentage} />
-            <PeopleInput numberOfPeople={numberOfPeople} setNumberOfPeople={setNumberOfPeople} />
-          </div>
-
-          <ResultsCard
-            billAmount={billAmount}
-            tipAmount={tipAmount}
-            totalAmount={totalAmount}
-            amountPerPerson={amountPerPerson}
-            numberOfPeople={numberOfPeople}
-            currency={currency}
-          />
-
-          <div className="flex space-x-2">
-            <ResetButton onReset={resetValues} />
-            <ShareResult result={calculationResult} />
-          </div>
-        </div>
-
+        {/* Ad Banner */}
         <AdSenseBanner />
+
+        {/* Main Calculator */}
+        <Card className="shadow-lg">
+          <CardHeader>
+            <CardTitle className="flex justify-between items-center">
+              {t("calculator")}
+              <CurrencySelector currency={currency} setCurrency={setCurrency} />
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Bill Input */}
+            <BillInput billAmount={billAmount} setBillAmount={setBillAmount} currency={currency} />
+
+            {/* Tip Selector */}
+            <TipSelector tipPercentage={tipPercentage} setTipPercentage={setTipPercentage} />
+
+            {/* People Input */}
+            <PeopleInput numberOfPeople={numberOfPeople} setNumberOfPeople={setNumberOfPeople} />
+
+            {/* Results */}
+            <ResultsCard
+              billAmount={billAmount}
+              tipAmount={tipAmount}
+              totalAmount={totalAmount}
+              amountPerPerson={amountPerPerson}
+              numberOfPeople={numberOfPeople}
+              currency={currency}
+            />
+
+            {/* Action Buttons */}
+            <div className="flex gap-2">
+              <ResetButton onReset={handleReset} />
+              <ShareResult result={calculationResult} />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Pro Version */}
+        <ProVersionToggle isProVersion={isProVersion} setIsProVersion={setIsProVersion} />
       </div>
     </div>
   )
